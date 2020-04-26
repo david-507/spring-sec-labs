@@ -14,6 +14,7 @@ public class UserDtoConverter {
         return GetUserDTO.builder()
                 .avatar(entity.getAvatar())
                 .username(entity.getUsername())
+                .email(entity.getEmail())
                 .roles(entity.getRoles().stream().map(UserRole::name).collect(Collectors.toSet()))
                 .build();
     }

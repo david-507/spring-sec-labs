@@ -12,6 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Set;
@@ -33,6 +34,9 @@ public class UserEntity implements UserDetails {
 
     @Column(unique = true)
     private String username;
+
+    @Email
+    private String email;
 
     private String password;
 
