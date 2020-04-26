@@ -29,8 +29,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 		ApiError apiError = new ApiError(HttpStatus.FORBIDDEN, accessDeniedException.getMessage());
 		String strApiError = mapper.writeValueAsString(apiError);
 		
-		PrintWriter writer = response.getWriter();
-		writer.print(strApiError);
+		response.getWriter().print(strApiError);
 	}
 
 }
