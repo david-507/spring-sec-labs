@@ -1,13 +1,15 @@
 package org.david.sec.config;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
+import org.david.sec.security.basic.CustomBasicAuthEntryPoint;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
@@ -16,27 +18,26 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-//    private final PasswordEncoder passwordEncoder;
-//    private final UserDetailsService userDetailsService;
+    private final CustomBasicAuthEntryPoint basicAuthEntryPoint;
+    private final UserDetailsService userDetailsService;
+    private final PasswordEncoder encoder;
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().anyRequest();
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(encoder);
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .httpBasic()
+                .authenticationEntryPoint(basicAuthEntryPoint)
+                .and()
+                .authorizeRequests()
+                .antMatchers(HttpMethod.GET, "/hello").hasRole("USER")
+                .antMatchers(HttpMethod.POST, "/user").permitAll()
+                .anyRequest().authenticated()
+            .and()
+        .csrf().disable();
     }
-
-//    @Override
-//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
-//    }
-//
-//    @Bean(BeanIds.AUTHENTICATION_MANAGER)
-//    @Override
-//    public AuthenticationManager authenticationManagerBean() throws Exception {
-//        return super.authenticationManagerBean();
-//    }
 }
