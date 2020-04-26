@@ -1,4 +1,4 @@
-package org.david.sec.controller;
+package org.david.sec.controller.login;
 
 import lombok.RequiredArgsConstructor;
 import org.david.sec.dto.CreateUserDTO;
